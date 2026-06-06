@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyril OTTO — Concepteur Développeur d'Applications</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --accent: #e63946;
+    --accent2: #4361ee;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --border: #2a2a38;
+    --tag-bg: #1e1e2e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(67,97,238,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(230,57,70,0.08) 0%, transparent 60%);
+  }
+
+  .hero-left { position: relative; z-index: 1; }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(230,57,70,0.3);
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 .last { color: var(--accent); }
+
+  .hero-desc {
+    color: var(--muted);
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+    font-size: 0.85rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #c1121f; transform: translateY(-2px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--text); transform: translateY(-2px); }
+
+  /* ── HERO RIGHT — animated terminal ── */
+  .hero-right {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 380px;
+    font-size: 0.75rem;
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c840; }
+
+  .terminal-body { padding: 1.2rem; }
+  .t-line { margin-bottom: 0.4rem; }
+  .t-prompt { color: var(--accent2); }
+  .t-cmd { color: var(--text); }
+  .t-out { color: var(--muted); }
+  .t-hi { color: #06d6a0; }
+  .t-warn { color: #ffd166; }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 3rem; }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 3rem;
+    line-height: 1;
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--surface); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .skill-card {
+    background: var(--surface);
+    padding: 1.8rem;
+    transition: background 0.2s;
+  }
+  .skill-card:hover { background: var(--surface2); }
+
+  .skill-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    color: var(--text);
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .tag:hover { border-color: var(--accent2); color: #a8b4ff; }
+
+  /* ── PROJECTS ── */
+  #projects { background: var(--bg); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .project-card:hover { border-color: var(--accent2); transform: translateY(-4px); }
+  .project-card:hover::before { transform: scaleX(1); }
+
+  .project-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .project-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.01em;
+  }
+
+  .project-card p { color: var(--muted); font-size: 0.8rem; margin-bottom: 1.2rem; }
+
+  .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+  .stack-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--accent2);
+    color: #a8b4ff;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--surface); }
+
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 3rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0.4rem;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    transform: translateX(-3px);
+  }
+
+  .t-date {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .timeline-item h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .t-company {
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .timeline-item ul {
+    list-style: none;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .timeline-item li { padding: 0.2rem 0; }
+  .timeline-item li::before { content: '→ '; color: var(--accent2); }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--bg); text-align: center; }
+
+  .contact-box {
+    max-width: 560px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    padding: 3.5rem;
+    position: relative;
+  }
+
+  .contact-box::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    z-index: -1;
+    opacity: 0.15;
+  }
+
+  .contact-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+
+  .contact-box p { color: var(--muted); margin-bottom: 2rem; font-size: 0.82rem; }
+
+  .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    transition: color 0.2s;
+  }
+  .contact-link:hover { color: var(--text); }
+  .contact-link svg { flex-shrink: 0; }
+
+  /* ── STAGE BANNER ── */
+  .stage-banner {
+    background: linear-gradient(135deg, var(--accent) 0%, #c1121f 100%);
+    color: #fff;
+    padding: 1rem 3rem;
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; gap: 3rem; }
+    .hero-right { justify-content: center; }
+    .terminal { width: 100%; max-width: 380px; }
+    section { padding: 4rem 1.5rem; }
+    .contact-box { padding: 2rem 1.5rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">C.<span>OTTO</span></div>
+  <ul class="nav-links">
+    <li><a href="#skills">Compétences</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#experience">Parcours</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- STAGE BANNER -->
+<div class="stage-banner">
+  🎯 Disponible pour un stage du 31 août au 23 octobre 2026
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-left">
+    <div class="hero-tag">// Concepteur Développeur d'Applications</div>
+    <h1>Cyril<br><span class="last">OTTO</span></h1>
+    <p class="hero-desc">
+      En formation CDA à l'ENI École Informatique de Quimper. Je développe des compétences solides en front-end, back-end et gestion de bases de données — avec une appétence pour les architectures API REST et les projets concrets.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">Voir mes projets</a>
+      <a href="#contact" class="btn btn-secondary">Me contacter</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">~$</span> <span class="t-cmd">whoami</span></div>
+        <div class="t-line"><span class="t-hi">cyril.otto</span></div>
+        <div class="t-line" style="margin-top:0.8rem"><span class="t-prompt">~$</span> <span class="t-cmd">cat stack.txt</span></div>
+        <div class="t-line"><span class="t-out">lang:</span> <span class="t-hi">Java · PHP · JS · Python</span></div>
+        <div class="t-line"><span class="t-out">fw:  </span> <span class="t-hi">Spring Boot · Symfony · Angular</span></div>
+        <div class="t-line"><span class="t-out">db:  </span> <span class="t-hi">MySQL · SQL Server · MongoDB</span></div>
+        <div class="t-line"><span class="t-out">ops: </span> <span class="t-hi">Docker · GitHub Actions</span></div>
+        <div class="t-line" style="margin-top:0.8rem"><span class="t-prompt">~$</span> <span class="t-cmd">cat stage.txt</span></div>
+        <div class="t-line"><span class="t-warn">31/08/2026 → 23/10/2026</span></div>
+        <div class="t-line" style="margin-top:0.8rem"><span class="t-prompt">~$</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">// 01 — Compétences</div>
+  <div class="section-title">Ma stack technique</div>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <h3>Langages</h3>
+      <div class="tags">
+        <span class="tag">Java</span>
+        <span class="tag">PHP</span>
+        <span class="tag">SQL</span>
+        <span class="tag">Transact SQL</span>
+        <span class="tag">HTML</span>
+        <span class="tag">CSS</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Python</span>
+        <span class="tag">Dart</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <h3>Frameworks</h3>
+      <div class="tags">
+        <span class="tag">Java Spring Boot</span>
+        <span class="tag">Spring Security</span>
+        <span class="tag">Symfony</span>
+        <span class="tag">Bootstrap</span>
+        <span class="tag">Angular</span>
+        <span class="tag">Flutter</span>
+        <span class="tag">Express.js</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <h3>Bases de données</h3>
+      <div class="tags">
+        <span class="tag">SQL Server</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">MongoDB</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <h3>Outils & DevOps</h3>
+      <div class="tags">
+        <span class="tag">Git</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">Docker</span>
+        <span class="tag">CI/CD GitHub Actions</span>
+        <span class="tag">VS Code</span>
+        <span class="tag">IntelliJ</span>
+        <span class="tag">Eclipse</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <h3>Architecture</h3>
+      <div class="tags">
+        <span class="tag">API REST</span>
+        <span class="tag">Singleton</span>
+        <span class="tag">Factory</span>
+        <span class="tag">Observer</span>
+        <span class="tag">Architecture en couches</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <h3>Environnements</h3>
+      <div class="tags">
+        <span class="tag">Android Studio</span>
+        <span class="tag">Jupyter Notebook</span>
+        <span class="tag">Suite JetBrains</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">// 02 — Projets</div>
+  <div class="section-title">Réalisations ENI</div>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-num">Projet 01</div>
+      <h3>Site d'enchères en ligne</h3>
+      <p>Application web multicouche permettant la mise en vente et l'enchère d'articles entre utilisateurs, avec gestion des sessions et persistance SQL Server.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Java</span>
+        <span class="stack-tag">Spring Boot</span>
+        <span class="stack-tag">SQL Server</span>
+        <span class="stack-tag">Architecture en couches</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-num">Projet 02</div>
+      <h3>Plateforme d'organisation d'événements</h3>
+      <p>Site web de gestion et publication d'événements avec système d'inscription, tests unitaires et outils de passage de tests définis en équipe.</p>
+      <div class="project-stack">
+        <span class="stack-tag">PHP</span>
+        <span class="stack-tag">Symfony</span>
+        <span class="stack-tag">MySQL</span>
+        <span class="stack-tag">Tests unitaires</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-num">Projet 03</div>
+      <h3>Application web API REST</h3>
+      <p>Architecture découplée front/back : back-end Java Spring Boot exposant une API REST, front-end Angular consommant l'API avec gestion des droits Spring Security.</p>
+      <div class="project-stack">
+        <span class="stack-tag">Angular</span>
+        <span class="stack-tag">Spring Boot</span>
+        <span class="stack-tag">Spring Security</span>
+        <span class="stack-tag">API REST</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">// 03 — Parcours</div>
+  <div class="section-title">Formation & expériences</div>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="t-date">Jan. 2026 — Oct. 2026</div>
+      <h3>Concepteur Développeur d'Applications <span style="color:var(--accent)">RNCP niv. 6 (Bac+3)</span></h3>
+      <div class="t-company">ENI École Informatique — Quimper</div>
+      <ul>
+        <li>Développement full-stack Java / PHP / JavaScript</li>
+        <li>Architecture API REST, patterns de conception</li>
+        <li>DevOps : Docker, CI/CD GitHub Actions</li>
+        <li>Projets en conditions réelles sur 3 applications complètes</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="t-date">Juin 2022 — Nov. 2025</div>
+      <h3>Technicien itinérant courant faible</h3>
+      <div class="t-company">Alliance Réseaux IDF — Tremblay-en-France</div>
+      <ul>
+        <li>Analyse des besoins techniques clients</li>
+        <li>Installation de systèmes d'intrusion, contrôle d'accès, caméras IP</li>
+        <li>Câblage baie réseau, surveillance vidéo</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="t-date">Sept. 2021 — Juin 2022</div>
+      <h3>Mécanicien Monteur & Programmeur informatique</h3>
+      <div class="t-company">PVI Groupe Renault — Gretz-Armainvilliers</div>
+      <ul>
+        <li>Diagnostic et résolution de pannes logicielles véhicules</li>
+        <li>Utilisation de valises diagnostics multi-logiciels</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="t-date">Jan. 2018 — Juil. 2021</div>
+      <h3>Coach sportif & Éducateur sportif</h3>
+      <div class="t-company">Indépendant — Créateur d'association de danse (2019–2021)</div>
+      <ul>
+        <li>Encadrement individuel et collectif</li>
+        <li>Création et gestion d'une association</li>
+        <li>Organisation de cours collectifs, animation, accueil client</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="t-date">2014</div>
+      <h3>BTS Assistance Technique d'Ingénieur</h3>
+      <div class="t-company">Lycée Martin Luther King — Bussy-Saint-Georges</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-box">
+    <h2>Parlons de votre<br>prochain projet</h2>
+    <p>Je recherche un stage du 31 août au 23 octobre 2026.<br>N'hésitez pas à me contacter !</p>
+    <div class="contact-links">
+      <a href="tel:0641892328" class="contact-link">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.35 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        06.41.89.23.28
+      </a>
+      <a href="mailto:otto.cyril@outlook.fr" class="contact-link">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        otto.cyril@outlook.fr
+      </a>
+      <span class="contact-link">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Plonéour-Lanvern
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Cyril OTTO</span>
+  <span>Concepteur Développeur d'Applications — ENI Quimper</span>
+</footer>
+
+<script>
+  // Intersection Observer for timeline items
+  const items = document.querySelectorAll('.timeline-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 120);
+      }
+    });
+  }, { threshold: 0.15 });
+  items.forEach(item => observer.observe(item));
+</script>
+
+</body>
+</html>
